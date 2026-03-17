@@ -16,6 +16,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - wefund
 
   pgadmin:
     image: dpage/pgadmin4
@@ -31,9 +33,53 @@ services:
         condition: service_healthy
     volumes:
       - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - wefund
+  
+  wefund-projects-services-api:
+    build:
+      context: ./wefund-projects-service
+      dockerfile: Dockerfile
+    container_name: wefund-projects-api
+    restart: unless-stopped
+    ports:
+      - "3000:1001"
+    environment:
+      JWT_SECRET: cle-demo-123
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - wefund
+  
+  wefund-contributions-paiements-utilisateurs-api:
+    build:
+      context: ./wefund-contributions-paiements-utilisateurs
+      dockerfile: Dockerfile
+    container_name: wefund-contributions-paiements-utilisateurs-api
+    restart: unless-stopped
+    ports:
+      - "3000:1002"
+    environment:
+      JWT_SECRET: cle-demo-123
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - wefund
 
 volumes:
   postgres_data:
     driver: local
   pgadmin_data:
     driver: local
+
+networks:
+  wefund:
+    driver: bridge

@@ -1,4 +1,5 @@
 wefund-frontend/
 wefund-projects-service/
 wefund-contributions-paiements-utilisateurs/
-wefund-dashboard
+wefund-dashboard/
+node-modules*
