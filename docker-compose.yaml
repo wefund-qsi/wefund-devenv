@@ -36,7 +36,7 @@ services:
     networks:
       - wefund
   
-  wefund-projects-services-api:
+  wefund-projects-service-api:
     build:
       context: ./wefund-projects-service
       dockerfile: Dockerfile
@@ -45,7 +45,7 @@ services:
     ports:
       - "1001:3000"
     environment:
-      JWT_SECRET: cle-demo-123
+      JWT_SECRET: ${JWT_SECRET:-cle-demo-123}
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
       DATABASE_USER: postgres
@@ -66,7 +66,7 @@ services:
     ports:
       - "1002:3000"
     environment:
-      JWT_SECRET: cle-demo-123
+      JWT_SECRET: ${JWT_SECRET:-cle-demo-123}
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
       DATABASE_USER: postgres
