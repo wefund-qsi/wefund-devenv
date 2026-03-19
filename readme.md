@@ -22,4 +22,22 @@ ATTENTION!
 Cette commmande va changer automatiquement tous les branches du projet vers la main et fera un pull des repos git, si vous avez fait des changements, pensez à les commit sur une nouvelle branche ou faire un stash avant de le lancer
 
 ## Lancement des projets ensemble
-TODO
+
+### Dev
+La commande suivante permet le lancement de tous les projets clonés dans son état actuel d'un seul coup:
+```bash
+docker compose up
+```
+
+Comme ça, on a une émulation sur l'environnement de Dev de comment ça devait marcher
+
+### Dry Run
+Pour simuler le comportement sur un environnement de Prod, la commande suivante est disponible
+```bash
+make dry-run-projects
+```
+
+Cette commande clone la dernière version de tous les projets puis les relance.
+
+### Configs à Faire:
+- Ajouter les variables d'environnement sur DevEnv (À voir ensemble comment faire)
