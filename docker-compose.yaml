@@ -75,8 +75,8 @@ services:
   
   wefund-contributions-paiements-utilisateurs-api:
     build:
-      context: ./wefund-contributions-paiements-utilisateurs
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./wefund-contributions-paiements-utilisateurs/Dockerfile
     container_name: wefund-contributions-paiements-utilisateurs-api
     restart: unless-stopped
     ports:
