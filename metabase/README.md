@@ -4,32 +4,85 @@
 
 Le script `seed_unified_only_proj1.sql` vise à peupler la base uniquement avec les entités du Projet 1 (projects, campagnes, news, etc.) et à lier toutes les contributions/transactions à ces campagnes/projets (UUID).
 
-## Problème rencontré
+README – Création du Dashboard Statistiques avec filtre global de dates dans Metabase
+Objectif
 
-Lors de l'exécution du script sur une base fraîche, l'insertion dans la table `contribution` échoue avec l'erreur suivante :
+Guide pour créer tes 5 questions Metabase (interface graphique)
+Story 2 – Montant total collecté sur une période
 
-```
-ERROR:  invalid input syntax for type integer: "22222222-2222-2222-2222-222222222001"
-LINE 2:   (1, 40, '2026-03-01 13:00:00', '22222222-2222-2222-2222-22...
-```
+Résultat attendu : date | amount_eur
 
-Cela signifie que la colonne `campagneId` de la table `contribution` attend un entier (clé primaire auto-incrémentée de la table `campagne` du Projet 2), alors que le script insère des UUID (liés aux campagnes du Projet 1).
+Étapes :
+Nouvelle question → table transactions.
+Filtrer sur statut = captured.
+Regrouper par date sur la colonne createdAt (par jour, mois, ou selon ton besoin).
+Résumé → Somme de montant.
+Ne pas fixer la date, pour laisser la plage vide. Tu ajouteras un filtre global plus tard.
+Choisis une visualisation type tableau ou graphique à barres pour voir l’évolution par date.
+Story 3 – Taux de succès global
 
-## Origine
+Résultat attendu : total_campaigns | successful | failed | active | success_rate_percent
 
-- **Projet 1** : Les campagnes et projets utilisent des UUID comme identifiants.
-- **Projet 2** : Les entités `contribution` et `campagne` utilisent des entiers auto-incrémentés comme identifiants et clés étrangères.
-- Le script de seed tente d'unifier les modèles en liant les contributions aux campagnes du Projet 1 (UUID), mais la structure de la table `contribution` ne le permet pas.
+Étapes :
+Nouvelle question → table campagnes.
+Résumer → Nombre total (total_campaigns).
+Crée 3 filtres ou segments via “Filtrer par champ” :
+statut est dans (REUSSIE, SUCCESSFUL) → successful
+statut est dans (ECHOUEE, FAILED) → failed
+statut est dans (ACTIVE, EN_COURS) → active
 
-## Solutions possibles
+Ajoute une colonne personnalisée pour calculer le taux de succès :
 
-1. **Adapter le script de seed** pour insérer des entiers factices dans `campagneId` (mais cela ne pointera pas vers les vraies campagnes du Projet 1).
-2. **Faire migrer la structure de la table `contribution`** pour accepter des UUID en clé étrangère, et ainsi permettre une vraie unification des modèles.
+success_rate_percent = (successful / (successful + failed)) * 100
+Cette question est globale (pas besoin de filtre date sauf si tu veux affiner).
+Story 4 – Nombre total de contributions sur une période
 
-## Recommandation
+Résultat attendu : date | count
 
-Pour une unification réelle et exploitable (Metabase, analytics, etc.), il est recommandé de migrer la structure de la table `contribution` (et toutes les FKs concernées) vers des UUID, afin de référencer directement les campagnes du Projet 1.
+Étapes :
+Nouvelle question → table contributions.
+Regrouper par date sur createdAt (jour, mois, etc.).
+Résumer → Nombre de lignes (count).
+Pas de filtre date fixé dans la question.
+Story 5 – Nombre moyen de contributions par campagne
 
----
+Résultat attendu : total_contributions | total_campaigns | average
 
-Contactez l'équipe technique pour valider la stratégie de migration et adapter les entités TypeORM + migrations SQL en conséquence.
+Étapes :
+
+C’est un peu plus complexe, car ça combine deux tables et un ratio. Voici comment procéder en GUI :
+
+Crée une question Contributions :
+Filtrer par date sur createdAt (laisser vide).
+Résumer → Nombre total de contributions.
+Sauvegarde comme total_contributions.
+Crée une question Campagnes :
+Filtrer statut dans (ACTIVE, EN_COURS).
+Filtrer date dateDebut <= et dateFin >= la même plage (laisser vide).
+Résumer → Nombre total de campagnes actives.
+Sauvegarde comme total_campaigns.
+Sur un dashboard, ajoute les deux questions.
+
+Crée un champ calculé dans le dashboard :
+
+average = total_contributions / total_campaigns
+Story 6 – Montant moyen par contribution
+
+Résultat attendu : total_amount_eur | total_contributions | average_eur
+
+Étapes :
+Nouvelle question → table contributions.
+Filtrer par date sur createdAt (laisser vide).
+Résumer →
+Somme de montant → total_amount_eur
+Nombre de lignes → total_contributions
+
+Crée une colonne personnalisée :
+
+average_eur = total_amount_eur / total_contributions
+Final – Créer le dashboard avec filtre global
+Crée un nouveau dashboard.
+Ajoute les 5 questions.
+Ajoute un filtre global Date (plage).
+Connecte ce filtre à chaque question via le champ createdAt ou date pertinente.
+Teste la plage de dates : toutes les questions se mettront à jour automatiquement.
