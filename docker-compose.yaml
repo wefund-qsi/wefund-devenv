@@ -96,6 +96,27 @@ services:
     networks:
       - wefund
 
+  wefund-dashboard:
+    build:
+      context: ./wefund-dashboard
+      dockerfile: Dockerfile
+    container_name: wefund-dashboard
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "4000:4000"
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: password
+      DATABASE_NAME: wefund_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - wefund
+
 volumes:
   postgres_data:
     driver: local
