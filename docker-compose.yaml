@@ -106,7 +106,6 @@ services:
       - "3000:3000"
       - "4000:4000"
     environment:
-      JWT_SECRET: ${JWT_SECRET:-cle-demo-123}
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
       DATABASE_USER: postgres
