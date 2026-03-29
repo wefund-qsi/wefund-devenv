@@ -96,6 +96,17 @@ services:
     networks:
       - wefund
 
+  wefund-frontend:
+    build:
+      context: ./wefund-frontend
+      dockerfile: Dockerfile
+    container_name: wefund-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - wefund
+
   wefund-dashboard:
     build:
       context: ./wefund-dashboard
@@ -106,6 +117,7 @@ services:
       - "4000:4000"
     environment:
       API_URL: http://localhost:3000
+      ANGULAR_SSR_ALLOWED_HOSTS: 167.71.1.17
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
       DATABASE_USER: postgres
