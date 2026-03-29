@@ -103,9 +103,9 @@ services:
     container_name: wefund-dashboard
     restart: unless-stopped
     ports:
-      - "3000:3000"
       - "4000:4000"
     environment:
+      API_URL: http://localhost:3000
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
       DATABASE_USER: postgres
